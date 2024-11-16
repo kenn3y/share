@@ -7,15 +7,21 @@ import re
 
 gtfobin = []
 gtfobin2 = []
-url = 'https://gtfobins.github.io'
+url = 'https://gtfobins.github.io2'
 check_suid = []
+
+def check_file():
+    with open('gtfobins.txt', 'r') as file:
+        response = file.read()
+        regels = response.splitlines()
+        return regels
 try:
     response = requests.get(url)
     response.raise_for_status()
     regels = response.text.splitlines()
 except requests.exceptions.RequestException as e:
-    print(e)
-    exit(1)
+    regels = check_file()
+    
 
 arg_present = len(sys.argv) > 1
 
