@@ -29,12 +29,14 @@ suid_files = {line.split('/')[-1] for line in output_lines}
 if len(sys.argv)==1:
     for suid in sorted(suid_files):
         for line in gtfobin:
-            if line == suid:
+            #print(line,suid)
+            if suid in line:
                 check_suid.append(suid)
+                break
 
     if check_suid:
         print('[+]Check SUIDS:')
-        print(check_suid)
+        print(f'{url}/gtfobins/{check_suid[0]}')
     else:
         print('[-]No matches')
     exit(0)
