@@ -9,8 +9,13 @@ gtfobin = []
 gtfobin2 = []
 url = 'https://gtfobins.github.io'
 check_suid = []
-response = requests.get(url)
-regels = response.text.splitlines()
+try:
+    response = requests.get(url)
+    response.raise_for_status()
+    regels = response.text.splitlines()
+except requests.exceptions.RequestException as e:
+    print(e)
+    exit(1)
 
 arg_present = len(sys.argv) > 1
 
@@ -36,10 +41,9 @@ if not arg_present:
 
 
 for line in gtfobin2:
-    if sys.argv[1] in line:
-        if 'class' in line:
-            #print(line, sys.argv[1])
-            match = re.search(r'href\s*=\s*["\'](.*?)["\']',line)
-            if match:
-                url2 = match.group(1)
+    if sys.argv[1] in line and 'class' in line:
+        match = re.search(r'href\s*=\s*["\'](.*?)["\']',line)
+        if match:
+            url2 = match.group(1)
+            if sys.argv[1] == url2.split('/')[-2]:
                 print(f'{url}{url2}')   
