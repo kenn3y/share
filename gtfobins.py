@@ -8,7 +8,7 @@ import os
 
 gtfobin = []
 gtfobin2 = []
-url = 'https://gtfobins.github.io2'
+url = 'https://gtfobins.github.io'
 check_suid = []
 local_file = 'gtfobins.txt'
 
