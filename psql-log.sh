@@ -9,3 +9,5 @@ echo "log_min_duration_statement = 0" >> "$CONF"
 systemctl restart postgresql 2>/dev/null || service postgresql restart
 
 echo "[+] PostgreSQL logging enabled"
+
+tail -f /var/log/postgresql/postgresql-*.log
