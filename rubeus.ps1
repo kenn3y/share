@@ -14,6 +14,7 @@ function Invoke-Rubeus
     $out = New-Object System.IO.MemoryStream
     $decompressed.CopyTo( $out )
     [byte[]] $byteOutArray = $out.ToArray()
+    [IO.File]::WriteAllBytes("D:\Downloads\rubeus_test.exe", $byteOutArray)
     $RAS = [System.Reflection.Assembly]::Load($byteOutArray)
     $OldConsoleOut = [Console]::Out
     $StringWriter = New-Object IO.StringWriter
